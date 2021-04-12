@@ -44,6 +44,33 @@ chown -R core: /var/home/core
 %end
 
 %post
+cmdline=`cat /proc/cmdline`
+params=(${cmdline// / })
+for param in "${params[@]}"; do
+  if [[ $param =~ "vip" ]]; then
+    eval $param
+  fi
+done
+
+cat << EOF > /etc/keepalived/keepalived.conf
+vrrp_instance RFE_VIP {
+    state $vip_state
+    interface enp1s0
+    virtual_router_id 50
+    priority $vip_priority
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass edge123
+    }
+    virtual_ipaddress {
+        $vip_ip
+    }
+}
+EOF
+%end
+
+%post
 
 ##
 ## Set the rpm-ostree update policy to automatically download and
