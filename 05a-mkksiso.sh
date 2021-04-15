@@ -11,24 +11,27 @@ then
 fi
 
 #
-# make sure all files owned by $USER
-#
-chown -R $SUDO_USER: .
-
-#
 # Create lightweight container to run mkksiso utility
 #
 TAG="33-x86_64"
+
+podman rmi -f mkksiso:$TAG
+
 CTR_ID=$(buildah from registry.fedoraproject.org/fedora:$TAG)
 buildah run $CTR_ID -- dnf -y install lorax
 buildah run $CTR_ID -- mkdir /data
 buildah commit $CTR_ID mkksiso:$TAG
 
 #
-# Run mkksiso command
+# Add the kickstart and command line options to the boot ISO
 #
+rm -f bootwithks.iso
 podman run --privileged -v .:/data:Z mkksiso:$TAG \
-    /usr/sbin/mkksiso /data/edge.ks /data/$(basename $ISO_PATH) /data/bootwithks.iso
+    /usr/sbin/mkksiso -c "inst.text console=ttyS0" \
+    /data/edge.ks /data/$(basename $ISO_PATH) /data/bootwithks.iso
 
+#
+# make sure all files owned by $SUDO_USER
+#
 chown -R $SUDO_USER: .
 
