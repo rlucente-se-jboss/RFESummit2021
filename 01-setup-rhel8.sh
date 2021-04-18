@@ -20,3 +20,12 @@ subscription-manager attach
 dnf -y update
 dnf -y clean all
 
+#
+# set up bridged network
+#
+ETHDEV=$(ip route get 8.8.8.8 | sed 's/.*dev //g' | awk '{print $1;exit}')
+nmcli connection add type bridge con-name bridge0 ifname bridge0
+nmcli connection modify $ETHDEV master bridge0
+nmcli connection modify bridge0 ipv6.method ignore
+nmcli connection up bridge0
+
