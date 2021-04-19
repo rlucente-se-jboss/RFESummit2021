@@ -44,6 +44,12 @@ chown -R core: /var/home/core
 %end
 
 %post
+
+##
+## Configure the virtual router redundancy protocol for keepalived
+##
+
+# parse out boot parameters beginning with "vip"
 cmdline=`cat /proc/cmdline`
 params=(${cmdline// / })
 for param in "${params[@]}"; do
@@ -52,6 +58,7 @@ for param in "${params[@]}"; do
   fi
 done
 
+# write the keepalived config file with the vip params
 cat << EOF > /etc/keepalived/keepalived.conf
 vrrp_instance RFE_VIP {
     state $vip_state
@@ -178,8 +185,35 @@ systemctl enable podman-auto-update.timer
 %post
 
 ##
+## Create a scale from zero service container web server using
+## socket activation
+##
+
+# define listener for socket activation
+cat << EOF > container-httpd-proxy.socket
+[Socket]
+ListenStream=8080
+
+[Install]
+WantedBy=sockets.target
+EOF
+
+# define proxy service that launches web container and forwards
+# requests to it
+cat << EOF > container-httpd-proxy.service 
+[Unit]
+Requires=container-httpd.service
+After=container-httpd.service
+Requires=container-httpd-proxy.socket
+After=container-httpd-proxy.socket
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:8081
+EOF
+
+##
 ## Create a service to launch the container workload and restart
-## on failure
+## it on failure
 ##
 
 cat > /etc/systemd/system/container-httpd.service <<EOF
@@ -197,7 +231,8 @@ After=network-online.target
 Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
 ExecStartPre=/bin/rm -f %t/container-httpd.pid %t/container-httpd.ctr-id
-ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --label io.containers.autoupdate=image --name httpd -p 8080:80 ${HOSTIP}:5000/httpd:prod
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --label io.containers.autoupdate=image --name httpd -p 8081:80 ${HOSTIP}:5000/httpd:prod
+ExecStartPost=/bin/sleep 1
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-httpd.ctr-id -t 10
 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-httpd.ctr-id
 PIDFile=%t/container-httpd.pid
