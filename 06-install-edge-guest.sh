@@ -11,6 +11,11 @@ then
 fi
 
 #
+# make boot ISO accessible
+#
+cp bootwithks.iso /tmp
+
+#
 # Launch virtual edge device but use bridged networking
 #
 virt-install \
@@ -18,7 +23,7 @@ virt-install \
     --memory $MEM_SIZE \
     --vcpus $NUM_CPUS \
     --network bridge=bridge0 \
-    --location bootwithks.iso \
+    --cdrom /tmp/bootwithks.iso \
     --os-variant=$OS_VARIANT \
     --disk size=$HDD_SIZE \
     --graphics none
