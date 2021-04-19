@@ -26,5 +26,6 @@ virt-install \
     --cdrom /tmp/bootwithks.iso \
     --os-variant=$OS_VARIANT \
     --disk size=$HDD_SIZE \
-    --graphics none
+    --graphics none \
+    --noreboot
 
