@@ -13,7 +13,7 @@ fi
 #
 # make boot ISO accessible
 #
-cp $HOME/bootwithks.iso /tmp
+cp /home/$SUDO_USER/bootwithks.iso /tmp
 
 #
 # Launch virtual edge device but use bridged networking
