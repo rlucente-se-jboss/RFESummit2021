@@ -32,8 +32,9 @@ podman run \
   /usr/sbin/mkksiso -c "inst.text console=ttyS0" edge.ks ${ISO_NAME} bootwithks.iso
 
 #
-# make sure all files owned by $SUDO_USER
+# Copy ISO to home directory and make sure all files owned by $SUDO_USER
 #
-chown -R $SUDO_USER: ${TEMP_DIR}
+cp ${TEMP_DIR}/bootwithks.iso /home/${SUDO_USER}/
+chown ${SUDO_USER} /home/${SUDO_USER}/bootwithks.iso
 
-echo "Output directory: ${TEMP_DIR}"
+rm -rf $(echo ${TEMP_DIR})
