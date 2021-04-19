@@ -2,8 +2,12 @@
 
 . $(dirname $0)/demo.conf
 
-if [[ $EUID -ne 0 ]]
-then
+ISO_NAME=$(basename ${ISO_PATH})
+TEMP_DIR=$(mktemp -d)
+
+cp ${ISO_PATH} edge.ks Containerfile ${TEMP_DIR}
+
+if [[ $EUID -ne 0 ]]; then
     echo
     echo "*** MUST RUN AS root ***"
     echo
@@ -13,32 +17,23 @@ fi
 #
 # Create lightweight container to run mkksiso utility
 #
-TAG="33-x86_64"
-
-podman rmi -f mkksiso:$TAG
-
-CTR_ID=$(buildah from registry.fedoraproject.org/fedora:$TAG)
-buildah run $CTR_ID -- dnf -y install lorax
-buildah run $CTR_ID -- mkdir /data
-buildah commit $CTR_ID mkksiso:$TAG
-
-#
-# Mount and unmount the rhel boot ISO to avoid an error with mkksiso.
-# No I don't know why.
-#
-mount -o loop $ISO_PATH /mnt
-umount /mnt
+podman build \
+  -t mkksiso:latest \
+  ${TEMP_DIR}
 
 #
 # Add the kickstart and command line options to the boot ISO
 #
-rm -f bootwithks.iso
-podman run --privileged -v .:/data:Z mkksiso:$TAG \
-    /usr/sbin/mkksiso -c "inst.text console=ttyS0" \
-    /data/edge.ks /data/$(basename $ISO_PATH) /data/bootwithks.iso
+podman run \
+  --rm \
+  --privileged \
+  -v ${TEMP_DIR}:/data:Z \
+  mkksiso:latest \
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0" edge.ks ${ISO_NAME} bootwithks.iso
 
 #
 # make sure all files owned by $SUDO_USER
 #
-chown -R $SUDO_USER: .
+chown -R $SUDO_USER: ${TEMP_DIR}
 
+echo "Output directory: ${TEMP_DIR}"
