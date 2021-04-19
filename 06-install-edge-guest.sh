@@ -2,6 +2,14 @@
 
 . $(dirname $0)/demo.conf
 
+if [[ $EUID -ne 0 ]]
+then
+    echo
+    echo "*** MUST RUN AS root ***"
+    echo
+    exit 1
+fi
+
 #
 # Launch virtual edge device but use bridged networking
 #
