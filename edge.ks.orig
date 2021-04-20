@@ -59,7 +59,7 @@ for param in "${params[@]}"; do
 done
 
 # write the keepalived config file with the vip params
-cat << EOF > /etc/keepalived/keepalived.conf
+cat << 'EOF' > /etc/keepalived/keepalived.conf
 vrrp_instance RFE_VIP {
     state $vip_state
     interface enp1s0
