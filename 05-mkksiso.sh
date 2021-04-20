@@ -29,7 +29,7 @@ podman run \
   --privileged \
   -v ${TEMP_DIR}:/data:Z \
   mkksiso:latest \
-  /usr/sbin/mkksiso -c "inst.text console=ttyS0" edge.ks ${ISO_NAME} bootwithks.iso
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_ip=$VIP_IP" edge.ks ${ISO_NAME} bootwithks.iso
 
 #
 # Copy ISO to home directory and make sure all files owned by $SUDO_USER
