@@ -12,26 +12,22 @@ fi
 
 function usage {
     echo
-    echo "Usage: $(basename $0) <master|backup> <priority>"
-    echo "  where priority is an integer between 1 and 254, inclusive"
+    echo "Usage: $(basename $0) < master | backup >"
     echo
     exit 1
 }
 
 #
-# Make sure that two arguments are provided and that the first
-# argument is either "master" or "backup" and second argument is an
-# integer between 1 and 254, inclusive.
+# Make sure that one argument is provided that is either "master"
+# or "backup"
 #
-[[ $# -eq 2 ]] || usage
+[[ $# -eq 1 ]] || usage
 
 case "$1" in
   master)
-    vip_state=master
     ;;
 
   backup)
-    vip_state=backup
     ;;
 
   *)
@@ -39,15 +35,12 @@ case "$1" in
     ;;
 esac
 
-[[ $2 =~ ^[0-9]+$ ]] || usage
-[ $2 -ge 1 -a $2 -le 254 ] || usage
-
-vip_priority=$2
+PRIORITY=$1
 
 #
 # make boot ISO accessible
 #
-cp /home/$SUDO_USER/bootwithks.iso /tmp
+cp /home/$SUDO_USER/${PRIORITY}bootwithks.iso /tmp
 
 #
 # Determine unique edge device name
@@ -62,10 +55,8 @@ virt-install \
     --name edge-device-$EDGENUM \
     --memory $MEM_SIZE \
     --vcpus $NUM_CPUS \
-    --location /tmp/bootwithks.iso,kernel=images/pxeboot/vmlinuz,initrd=images/pxeboot/initrd.img \
-    --extra-args "vip_state=$vip_state vip_priority=$vip_priority" \
     --network bridge=bridge0 \
-    --cdrom /tmp/bootwithks.iso \
+    --cdrom /tmp/${PRIORITY}bootwithks.iso \
     --os-variant=$OS_VARIANT \
     --disk size=$HDD_SIZE \
     --graphics none \

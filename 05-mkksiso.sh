@@ -22,19 +22,31 @@ podman build \
   ${TEMP_DIR}
 
 #
-# Add the kickstart and command line options to the boot ISO
+# Add the kickstart and command line options to the master's boot ISO
 #
 podman run \
   --rm \
   --privileged \
   -v ${TEMP_DIR}:/data:Z \
   mkksiso:latest \
-  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_ip=$VIP_IP" edge.ks ${ISO_NAME} bootwithks.iso
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=master vip_priority=200 vip_ip=$VIP_IP" \
+  edge.ks ${ISO_NAME} masterbootwithks.iso
 
 #
-# Copy ISO to home directory and make sure all files owned by $SUDO_USER
+# Add the kickstart and command line options to the backup's boot ISO
 #
-cp ${TEMP_DIR}/bootwithks.iso /home/${SUDO_USER}/
-chown ${SUDO_USER} /home/${SUDO_USER}/bootwithks.iso
+podman run \
+  --rm \
+  --privileged \
+  -v ${TEMP_DIR}:/data:Z \
+  mkksiso:latest \
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=backup vip_priority=100 vip_ip=$VIP_IP" \
+  edge.ks ${ISO_NAME} backupbootwithks.iso
+
+#
+# Copy ISOs to home directory and make sure all files owned by $SUDO_USER
+#
+cp ${TEMP_DIR}/*bootwithks.iso /home/${SUDO_USER}/
+chown ${SUDO_USER} /home/${SUDO_USER}/*bootwithks.iso
 
 rm -rf $(echo ${TEMP_DIR})
