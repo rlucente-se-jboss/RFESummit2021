@@ -62,6 +62,7 @@ virt-install \
     --name edge-device-$EDGENUM \
     --memory $MEM_SIZE \
     --vcpus $NUM_CPUS \
+    --location /tmp/bootwithks.iso,kernel=images/pxeboot/vmlinuz,initrd=images/pxeboot/initrd.img \
     --extra-args "vip_state=$vip_state vip_priority=$vip_priority" \
     --network bridge=bridge0 \
     --cdrom /tmp/bootwithks.iso \
