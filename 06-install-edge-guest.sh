@@ -50,10 +50,16 @@ vip_priority=$2
 cp /home/$SUDO_USER/bootwithks.iso /tmp
 
 #
+# Determine unique edge device name
+#
+EDGENUM=$(virsh list --all | grep edge | sed 's/..*device-\([0-9]*\)..*/\1/g' | sort | tail -1)
+EDGENUM=$(($EDGENUM + 1))
+
+#
 # Launch virtual edge device but use bridged networking
 #
 virt-install \
-    --name edge-device \
+    --name edge-device-$EDGENUM \
     --memory $MEM_SIZE \
     --vcpus $NUM_CPUS \
     --extra-args "vip_state=$vip_state vip_priority=$vip_priority" \
