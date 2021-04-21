@@ -29,7 +29,7 @@ podman run \
   --privileged \
   -v ${TEMP_DIR}:/data:Z \
   mkksiso:latest \
-  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=master vip_priority=200 vip_ip=$VIP_IP" \
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=master vip_priority=200" \
   edge.ks ${ISO_NAME} masterbootwithks.iso
 
 #
@@ -40,7 +40,7 @@ podman run \
   --privileged \
   -v ${TEMP_DIR}:/data:Z \
   mkksiso:latest \
-  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=backup vip_priority=100 vip_ip=$VIP_IP" \
+  /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=backup vip_priority=100" \
   edge.ks ${ISO_NAME} backupbootwithks.iso
 
 #
