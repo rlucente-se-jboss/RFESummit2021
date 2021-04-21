@@ -59,6 +59,6 @@ virt-install \
     --cdrom /tmp/${PRIORITY}bootwithks.iso \
     --os-variant=$OS_VARIANT \
     --disk size=$HDD_SIZE \
-    --graphics none \
+    --graphics vnc,keymap=en-us \
+    --noautoconsole \
     --noreboot
-
