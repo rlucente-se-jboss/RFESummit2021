@@ -252,7 +252,7 @@ registries = ['${HOSTIP}:5000']
 registries = []
 EOF
 
-systemctl enable container-httpd.service
+systemctl enable container-httpd-proxy.socket
 %end
 
 %post
