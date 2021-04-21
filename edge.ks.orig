@@ -192,7 +192,7 @@ systemctl enable podman-auto-update.timer
 # define listener for socket activation
 cat << EOF > /etc/systemd/system/container-httpd-proxy.socket
 [Socket]
-ListenStream=8080
+ListenStream=$VIP_IP:8080
 
 [Install]
 WantedBy=sockets.target

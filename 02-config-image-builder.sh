@@ -30,7 +30,7 @@ firewall-cmd --permanent --add-port=8000/tcp
 firewall-cmd --reload
 
 # prep the edge.ks file
-envsubst '$HOSTIP' < edge.ks.orig > edge.ks
+envsubst '${HOSTIP} ${VIP_IP}' < edge.ks.orig > edge.ks
 
 echo "Verify that system is prepared to be a virtualization host"
 virt-host-validate
