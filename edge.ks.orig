@@ -190,7 +190,7 @@ systemctl enable podman-auto-update.timer
 ##
 
 # define listener for socket activation
-cat << EOF > container-httpd-proxy.socket
+cat << EOF > /etc/systemd/system/container-httpd-proxy.socket
 [Socket]
 ListenStream=8080
 
@@ -200,7 +200,7 @@ EOF
 
 # define proxy service that launches web container and forwards
 # requests to it
-cat << EOF > container-httpd-proxy.service 
+cat << EOF > /etc/systemd/system/container-httpd-proxy.service 
 [Unit]
 Requires=container-httpd.service
 After=container-httpd.service
