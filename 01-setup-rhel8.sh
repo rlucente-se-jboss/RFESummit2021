@@ -23,9 +23,9 @@ dnf -y clean all
 #
 # set up bridged network
 #
-ETHDEV=$(ip route get 8.8.8.8 | sed 's/.*dev //g' | awk '{print $1;exit}')
+ETHDEV="$(nmcli -t con show |grep $(ip route get 8.8.8.8 | awk '{print $5; exit}') | awk -F: '{print $1}')"
 nmcli connection add type bridge con-name bridge0 ifname bridge0
-nmcli connection modify $ETHDEV master bridge0
-nmcli connection modify bridge0 ipv6.method ignore
+nmcli connection modify "$ETHDEV" master bridge0
+nmcli connection modify bridge0 ipv6.method ignore bridge.stp no
 nmcli connection up bridge0
 
