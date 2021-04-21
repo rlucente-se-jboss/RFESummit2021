@@ -193,6 +193,7 @@ systemctl enable podman-auto-update.timer
 cat << EOF > /etc/systemd/system/container-httpd-proxy.socket
 [Socket]
 ListenStream=$VIP_IP:8080
+FreeBind=true
 
 [Install]
 WantedBy=sockets.target
