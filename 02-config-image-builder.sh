@@ -15,7 +15,7 @@ dnf -y module install virt
 
 # install image builder and other necessary packages
 dnf -y install osbuild-composer composer-cli cockpit-composer \
-    bash-completion jq virt-install virt-viewer golang
+    bash-completion jq virt-install virt-viewer cockpit-machines golang
 
 # enable libvirtd
 systemctl enable --now libvirtd
