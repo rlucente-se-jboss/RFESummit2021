@@ -8,6 +8,10 @@ groups = []
 name = "keepalived"
 version = "*"
 
+[[packages]]
+name = "setroubleshoot-server"
+version = "*"
+
 [customizations]
 
 [customizations.firewall]
