@@ -49,7 +49,7 @@ chown -R core: /var/home/core
 ## Adjust SELinux policy to allow proxying the http requests
 ##
 
-cat <<EOF > my-systemdsocket.te
+cat <<EOF > /tmp/my-systemdsocket.te
 
 module my-systemdsocket 1.0;
 
@@ -63,9 +63,9 @@ require {
 allow init_t http_cache_port_t:tcp_socket name_connect;
 EOF
 
-checkmodule -M -m -o my-systemdsocket.mod my-systemdsocket.te
-semodule_package -o my-systemdsocket.pp -m my-systemdsocket.mod
-semodule -i my-systemdsocket.pp
+checkmodule -M -m -o /tmp/my-systemdsocket.mod /tmp/my-systemdsocket.te
+semodule_package -o /tmp/my-systemdsocket.pp -m /tmp/my-systemdsocket.mod
+semodule -i /tmp/my-systemdsocket.pp
 %end
 
 %post
