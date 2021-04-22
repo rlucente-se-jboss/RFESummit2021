@@ -46,6 +46,31 @@ chown -R core: /var/home/core
 %post
 
 ##
+## Adjust SELinux policy to allow proxying the http requests
+##
+
+cat <<EOF > my-systemdsocket.te
+
+module my-systemdsocket 1.0;
+
+require {
+	type transproxy_port_t;
+	type init_t;
+	class tcp_socket name_connect;
+}
+
+#============= init_t ==============
+allow init_t transproxy_port_t:tcp_socket name_connect;
+EOF
+
+checkmodule -M -m -o my-systemdsocket.mod my-systemdsocket.te
+semodule_package -o my-systemdsocket.pp -m my-systemdsocket.mod
+semodule -i my-systemdsocket.pp
+%end
+
+%post
+
+##
 ## Configure the virtual router redundancy protocol for keepalived
 ##
 
