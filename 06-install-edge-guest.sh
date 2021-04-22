@@ -25,17 +25,17 @@ function usage {
 
 case "$1" in
   master)
+    PRIORITY=$1
     ;;
 
   backup)
+    PRIORITY=$1
     ;;
 
   *)
     usage
     ;;
 esac
-
-PRIORITY=$1
 
 #
 # make boot ISO accessible
