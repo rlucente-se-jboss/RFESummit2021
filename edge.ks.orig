@@ -54,13 +54,13 @@ cat <<EOF > my-systemdsocket.te
 module my-systemdsocket 1.0;
 
 require {
-	type transproxy_port_t;
+	type http_cache_port_t;
 	type init_t;
 	class tcp_socket name_connect;
 }
 
 #============= init_t ==============
-allow init_t transproxy_port_t:tcp_socket name_connect;
+allow init_t http_cache_port_t:tcp_socket name_connect;
 EOF
 
 checkmodule -M -m -o my-systemdsocket.mod my-systemdsocket.te
@@ -234,7 +234,7 @@ Requires=container-httpd-proxy.socket
 After=container-httpd-proxy.socket
 
 [Service]
-ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:8081
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:8080
 EOF
 
 ##
@@ -257,7 +257,7 @@ After=network-online.target
 Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
 ExecStartPre=/bin/rm -f %t/container-httpd.pid %t/container-httpd.ctr-id
-ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --label io.containers.autoupdate=image --name httpd -p 8081:80 ${HOSTIP}:5000/httpd:prod
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --label io.containers.autoupdate=image --name httpd -p 127.0.0.1:8080:80 ${HOSTIP}:5000/httpd:prod
 ExecStartPost=/bin/sleep 1
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-httpd.ctr-id -t 10
 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-httpd.ctr-id
