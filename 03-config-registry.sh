@@ -44,6 +44,6 @@ podman rm -f --all
 #
 cp container-registry.service /etc/systemd/system
 restorecon -vFr /etc/systemd/system
-systemctl enable --now container-registry.service
 systemctl daemon-reload
+systemctl enable --now container-registry.service
 
