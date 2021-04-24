@@ -22,7 +22,7 @@ podman build \
   ${TEMP_DIR}
 
 #
-# Add the kickstart and command line options to the master's boot ISO
+# Add the kickstart and command line options to the primary's boot ISO
 #
 podman run \
   --rm \
@@ -30,7 +30,7 @@ podman run \
   -v ${TEMP_DIR}:/data:Z \
   mkksiso:latest \
   /usr/sbin/mkksiso -c "inst.text console=ttyS0 vip_state=master vip_priority=200" \
-  edge.ks ${ISO_NAME} masterbootwithks.iso
+  edge.ks ${ISO_NAME} primarybootwithks.iso
 
 #
 # Add the kickstart and command line options to the backup's boot ISO

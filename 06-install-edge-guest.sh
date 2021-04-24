@@ -12,19 +12,19 @@ fi
 
 function usage {
     echo
-    echo "Usage: $(basename $0) < master | backup >"
+    echo "Usage: $(basename $0) < primary | backup >"
     echo
     exit 1
 }
 
 #
-# Make sure that one argument is provided that is either "master"
+# Make sure that one argument is provided that is either "primary"
 # or "backup"
 #
 [[ $# -eq 1 ]] || usage
 
 case "$1" in
-  master)
+  primary)
     PRIORITY=$1
     ;;
 
