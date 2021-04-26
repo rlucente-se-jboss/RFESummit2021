@@ -2,6 +2,7 @@
 This presents a demonstration of RHEL for Edge that includes:
 * Serverless container application
 * Automatic failover from one guest node to another
+* Automatic restart of container application
 * Automatic update to container application
 * Atomic upgrade of the underlying operating system with rollback on failure
 
@@ -305,6 +306,50 @@ edge guest using the same mechanism as before. This demonstrates
 that the virtual IP address was taken by the alternative edge guest
 after the first guest was terminated. The web application was then
 launched on the alternate edge guest to respond to the web request.
+
+### Auto restart of the container web application
+Press the key combination `CTRL-C` on the edge guest to terminate
+the `watch` command.
+
+The systemd configuration for our container web service has the
+policy `Restart=on-failure`. If the program should unexpectedly
+fail, systemd will restart it. However, if the program normally
+exits, it will not be restarted. The policy can also be modified
+to cover many use cases as we'll see in a minute. Let's go ahead
+and trigger a restart of our container web application.
+Type the following command on the edge guest:
+
+    sudo pkill -9 httpd
+
+This command sends a KILL signal to the httpd processes inside the
+container, immediately terminating them. Since the restart policy
+is `on-failure`, systemd will relaunch the container web application.
+While that's happening, we can discuss the various restart policies
+that are available.
+
+The table below lists how the various policies affect a restart.
+The left-most column lists the various causes for why the systemd
+managed service exited. The top row lists the various restart
+policies. And the `X`'s indicate whether a restart will occur for
+each combination of exit reason and policy. A full discussion of
+the `Restart=` option in the systemd service unit file is available
+via the command `man systemd-unit` on the host system (the guest
+has no man pages installed to reduce space).
+
+ Restart settings/Exit causes | no | always | on-success | on-failure | on-abnormal | on-abort | on-watchdog 
+------------------------------|----|--------|------------|------------|-------------|----------|-------------
+ Clean exit code or signal    |    |   X    |     X      |            |             |          |             
+ Unclean exit code            |    |   X    |            |     X      |             |          |             
+ Unclean signal               |    |   X    |            |     X      |     X       |    X     |             
+ Timeout                      |    |   X    |            |     X      |     X       |          |             
+ Watchdog                     |    |   X    |            |     X      |     X       |          |     X       
+
+Once again, please confirm that the container application has fully
+started. In the same terminal, type the following commands to see
+if the container web application is fully active.
+
+    systemctl status container-httpd.service
+    sudo watch 'clear; podman container list'
 
 ### Auto update of the container web application
 Let's update the container web application image from version 1 to
