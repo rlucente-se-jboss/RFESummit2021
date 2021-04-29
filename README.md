@@ -14,7 +14,7 @@ Download the [RHEL 8.3 Boot ISO](https://access.redhat.com/downloads/content/479
 in the same directory as this repository.
 
 During RHEL installation, configure a regular user with `sudo`
-privileges on the host. These instructions assume that the `summit2021`
+privileges on the host. These instructions assume that the `RFESummit2021`
 git repository is cloned or copied to your user's home directory
 on the RHEL host.
 
@@ -37,7 +37,7 @@ Login to the RHEL host using `ssh` and then run the first script
 to update the system and create the network bridge for the virtual
 guests.
 
-    cd ~/summit2021
+    cd ~/RFESummit2021
     sudo ./01-setup-rhel8.sh
     reboot
 
@@ -65,7 +65,7 @@ host with the user account you configured earlier.
 We'll start by examining the blueprint file that is a template for
 the OSTree operating system images we'll be creating.
 
-    cd ~/summit2021
+    cd ~/RFESummit2021
     less RFE.toml
 
 The blueprint file contains metadata for the OSTree image, desired
@@ -215,17 +215,17 @@ separate terminal window, run the web server in the same directory
 as our first image compose:
 
     cd ~/version-1
-    go run ../summit2021/main.go
+    go run ../RFESummit2021/main.go
 
 In each of the remaining terminal windows, we'll install the edge
 virtual guests. In the first guest terminal window, type the commands:
 
-    cd ~/summit2021
+    cd ~/RFESummit2021
     sudo ./install-edge-guest.sh primary && sudo virsh console edge-device-1
 
 In the second guest terminal window, type the commands:
 
-    cd ~/summit2021
+    cd ~/RFESummit2021
     sudo ./install-edge-guest.sh backup && sudo virsh console edge-device-2
 
 When the installations are complete, the scripts will exit. You can
