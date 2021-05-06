@@ -54,6 +54,8 @@ The above scripts do the following:
 * build two versions of a container app and push both to the local registry
 * create custom boot ISO with an embedded kickstart file and kernel boot parameters
 
+NB: If the `05-mkksiso.sh` script emits errors, simply rerun it.
+
 Once you've run the above scripts successfully, setup is complete.
 
 ## Demo
