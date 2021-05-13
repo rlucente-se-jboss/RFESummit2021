@@ -113,8 +113,8 @@ Description=Daily Update Reboot Check.
 
 [Timer]
 # activate every minute
-OnBootSec=60
-OnUnitActiveSec=60
+OnBootSec=30
+OnUnitActiveSec=30
 
 #weekly example for Sunday at midnight
 #OnCalendar=Sun *-*-* 00:00:00
@@ -210,9 +210,6 @@ Type=forking
 WantedBy=multi-user.target default.target
 EOF
 
-# enable socket listener
-ln -s /var/home/core/.config/systemd/user/container-httpd-proxy.socket /var/home/core/.config/systemd/user/sockets.target.wants/container-httpd-proxy.socket
-
 ##
 ## Create a service and timer to periodically check if the container
 ## image has been updated and then, if so, refresh the workload
@@ -253,25 +250,34 @@ Description=Podman auto-update timer
 #RandomizedDelaySec=7200
 
 # activate every minute
-OnBootSec=60
-OnUnitActiveSec=60
+OnBootSec=30
+OnUnitActiveSec=30
 
 [Install]
 WantedBy=timers.target
 EOF
 
+# enable socket listener
+ln -s /var/home/core/.config/systemd/user/container-httpd-proxy.socket /var/home/core/.config/systemd/user/sockets.target.wants/container-httpd-proxy.socket
+
 # enable timer
 ln -s /var/home/core/.config/systemd/user/podman-auto-update.timer /var/home/core/.config/systemd/user/timers.target.wants/podman-auto-update.timer
 
-# enable linger so user services run whether user logged in or not
-touch /var/lib/systemd/linger/core
-
-# fix ownership of user local files
+# fix ownership of user local files and SELinux contexts
 chown -R core: /var/home/core
-
-# fix SELinux contexts
-restorecon -vFr /var/lib/systemd
 restorecon -vFr /var/home/core
+
+# enable linger so user services run whether user logged in or not
+cat << EOF > /etc/systemd/system/enable-linger.service
+[Service]
+Type=oneshot
+ExecStart=loginctl enable-linger core
+
+[Install]
+WantedBy=multi-user.target default.target
+EOF
+
+systemctl enable enable-linger.service
 %end
 
 %post
