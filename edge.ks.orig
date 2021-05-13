@@ -72,7 +72,7 @@ vrrp_instance RFE_VIP {
         auth_pass edge123
     }
     virtual_ipaddress {
-        $VIP_IP/24
+        $VIP_IP/$VIP_MASK
     }
 }
 EOF
