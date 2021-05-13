@@ -5,11 +5,19 @@ modules = []
 groups = []
 
 [[packages]]
+name = "fuse-overlayfs"
+version = "*"
+
+[[packages]]
 name = "keepalived"
 version = "*"
 
 [[packages]]
 name = "setroubleshoot-server"
+version = "*"
+
+[[packages]]
+name = "slirp4netns"
 version = "*"
 
 [customizations]

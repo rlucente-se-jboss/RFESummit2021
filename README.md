@@ -1,6 +1,6 @@
 # RHEL for Edge Demo
 This presents a demonstration of RHEL for Edge that includes:
-* Serverless container application
+* Rootless and serverless container application
 * Automatic failover from one guest node to another
 * Automatic restart of container application
 * Automatic update to container application
@@ -253,22 +253,23 @@ protocol (VRRP) to elect an owner for the virtual IP address,
 configured earlier in the `demo.conf` file. Only one guest will
 respond to this address.
 
-### Serverless container application
-Each guest is configure to listen on port 8080 at the virtual IP
+### Rootless and serverless container application
+Each guest is configured to listen on port 8080 at the virtual IP
 address for a web request. When an http request is received, systemd
 socket activation will launch a proxy service which will in turn
-start the container web application to service the request. Neither
-guest is running any container applications at start up. The container
-web application is started when the first request is received and
-only one guest will respond since they are electing an owner for
-the virtual IP address.
+start the container web application to service the request. The
+socket listener and both services are running rootless under user
+`core`. Neither guest is running any container applications at start
+up. The container web application is started when the first request
+is received and only one guest will respond since they are electing
+an owner for the virtual IP address.
 
 Let's watch this in action. We need to monitor which guest is running
 a container application. Log in to each guest using username `core`
 with password `edge` and then run the following command on each
 guest:
 
-    sudo watch 'clear; podman container list'
+    watch 'clear; podman container list'
 
 In the separate terminal where you built the images, use curl to
 send a request to the virtual IP address. This address is defined
@@ -321,7 +322,7 @@ to cover many use cases as we'll see in a minute. Let's go ahead
 and trigger a restart of our container web application.
 Type the following command on the edge guest:
 
-    sudo pkill -9 httpd
+    pkill -9 httpd
 
 This command sends a KILL signal to the httpd processes inside the
 container, immediately terminating them. Since the restart policy
@@ -350,8 +351,8 @@ Once again, please confirm that the container application has fully
 started. In the same terminal, type the following commands to see
 if the container web application is fully active.
 
-    systemctl status container-httpd.service
-    sudo watch 'clear; podman container list'
+    systemctl --user status container-httpd.service
+    watch 'clear; podman container list'
 
 ### Auto update of the container web application
 Let's update the container web application image from version 1 to
