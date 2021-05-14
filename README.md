@@ -202,9 +202,8 @@ Once again, use the `ref` to list all the packages in the image:
 
     rpm-ostree db list rhel/8/x86_64/edge --repo=repo | less
 
-We'll be adding the package `strace` in the next version of our
-compose, but you can confirm that the package is not included in
-this compose using:
+You can confirm that the `strace` package is included in this compose
+using:
 
     rpm-ostree db list rhel/8/x86_64/edge --repo=repo | grep strace
 
