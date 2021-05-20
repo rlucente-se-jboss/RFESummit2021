@@ -7,10 +7,10 @@ This presents a demonstration of RHEL for Edge that includes:
 * Atomic upgrade of the underlying operating system with rollback on failure
 
 ## Pre-demo setup 
-Start with a minimal install of RHEL 8.3+ on baremetal or on a VM
+Start with a minimal install of RHEL 8.4+ on baremetal or on a VM
 that permits nested virtualization. Make sure this repository is
 on your RHEL 8 host using either `git clone` or secure copy (`scp`).
-Download the [RHEL 8.3 Boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software)
+Download the [RHEL 8.4 Boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.4/x86_64/product-software)
 in the same directory as this repository.
 
 During RHEL installation, configure a regular user with `sudo`
@@ -25,7 +25,7 @@ to pull updated content. Also, review the settings for the amount
 of memory (in MiB), number of virtual cpus, disk size, and the
 virtual IP (VIP) address for keepalived for each of the two edge
 guests that you'll be launching using KVM.  Please make sure the
-path to the [RHEL 8.3 boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software)
+path to the [RHEL 8.4 boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.4/x86_64/product-software)
 is correct.
 
 The first setup script will configure a network bridge so that the
@@ -247,7 +247,7 @@ and for the second guest, use the command:
 
     sudo virsh start edge-device-2 && sudo virsh console edge-device-2
 
-Each guest is using keepalived and the virtual redundancy router
+Each guest is using keepalived and the virtual router redundancy
 protocol (VRRP) to elect an owner for the virtual IP address,
 configured earlier in the `demo.conf` file. Only one guest will
 respond to this address.
@@ -504,8 +504,8 @@ three times before rolling back to the prior version. With each
 boot attempt, you should see the following appear in the guest
 terminal:
 
-      Red Hat Enterprise Linux 8.3 (Ootpa) (ostree:0)
-      Red Hat Enterprise Linux 8.3 (Ootpa) (ostree:1)
+      Red Hat Enterprise Linux 8.4 (Ootpa) (ostree:0)
+      Red Hat Enterprise Linux 8.4 (Ootpa) (ostree:1)
 
 The `ostree:0` image will be highlighted on the first three boot
 attempts since `ostree:0` designates the most recent operating
