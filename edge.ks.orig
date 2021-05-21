@@ -37,16 +37,6 @@ ostreesetup --nogpg --url=http://${HOSTIP}:8000/repo/ --osname=rhel --remote=edg
 %post
 
 ##
-## Create 'core' user home directory if it doesn't exist
-##
-
-mkdir -p /var/home/core
-chown -R core: /var/home/core
-%end
-
-%post
-
-##
 ## Configure the virtual router redundancy protocol for keepalived
 ##
 
