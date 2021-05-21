@@ -248,9 +248,11 @@ and for the second guest, use the command:
     sudo virsh start edge-device-2 && sudo virsh console edge-device-2
 
 Each guest is using keepalived and the virtual router redundancy
-protocol (VRRP) to elect an owner for the virtual IP address,
-configured earlier in the `demo.conf` file. Only one guest will
-respond to this address.
+protocol (VRRP) to assign the virtual IP address to the primary
+instance unless it fails. Upon failure, the backup instance assumes
+the virtual IP address until the primary instance comes back on
+line. The virtual IP address was configured earlier in the `demo.conf`
+file. Only one guest at a time will respond to this address.
 
 ### Rootless and serverless container application
 Each guest is configured to listen on port 8080 at the virtual IP
@@ -278,36 +280,38 @@ address is `192.168.1.100`.
 
     curl http://192.168.1.100:8080
 
-The edge guest that is currently holding that address will receive
-the request on port 8080. Systemd, listening to that port via its
-socket activation feature, will launch a proxy service that in turn
-will launch podman as a service to run our container web application.
-Podman will download the container image from the registry and
-launch the containerized process. That process will then respond
-to the http request.
+The primary edge guest, if active, will receive the request on port
+8080. If the primary edge guest is not running, the backup edge
+guest will respond. Systemd, listening to that port via its socket
+activation feature, will launch a proxy service that in turn will
+launch podman as a service to run our container web application.
+Podman will download the container image from the registry, if it
+doesn't already have the container image cached, and launch the
+containerized process. That process will then respond to the http
+request.
 
-Only one edge guest will launch the container web application in
-response to the curl request. We can test the failover feature of
-keepalived by terminating the responding guest. Identify which guest
-responded to the request. Then in the terminal window where you
+Since both the primary and backup edge guests are running, the
+primary guest will launch the container web application in response
+to the curl request. We can test the failover feature of keepalived
+by terminating the primary guest.  In the terminal window where you
 just ran `curl`, type the following command:
 
-    sudo virsh destroy edge-device-n
+    sudo virsh destroy edge-device-1
 
-where `edge-device-n` is either `edge-device-1` or `edge-device-2`
-depending on which edge guest is running the web container application.
+where `edge-device-1` corresponds to the primary guest and
+`edge-device-2` corresponds to the backup guest. Adjust accordingly
+for your system.
 
-Once the edge guest is terminated, wait a few seconds and then
-resend the web request using:
+Once the primary guest is terminated, resend the web request using:
 
     curl http://192.168.1.100:8080
 
 Make sure to substitute your virtual IP address in the above command.
-You'll see the container web application start on the remaining
-edge guest using the same mechanism as before. This demonstrates
-that the virtual IP address was taken by the alternative edge guest
-after the first guest was terminated. The web application was then
-launched on the alternate edge guest to respond to the web request.
+You'll see the container web application start on the backup edge
+guest using the same mechanism as before. This demonstrates that
+the virtual IP address was taken by the backup edge guest after the
+primary guest was terminated. The web application was then launched
+on the backup edge guest to respond to the web request.
 
 ### Auto restart of the container web application
 Press the key combination `CTRL-C` on the edge guest to terminate
