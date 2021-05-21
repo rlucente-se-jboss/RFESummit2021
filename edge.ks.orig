@@ -177,8 +177,10 @@ EOF
 
 # create systemd user directories for rootless services, timers,
 # and sockets
+mkdir -p /var/home/core/.config/systemd/user/default.target.wants
 mkdir -p /var/home/core/.config/systemd/user/sockets.target.wants
 mkdir -p /var/home/core/.config/systemd/user/timers.target.wants
+mkdir -p /var/home/core/.config/systemd/user/multi-user.target.wants
 
 # define listener for socket activation
 cat << EOF > /var/home/core/.config/systemd/user/container-httpd-proxy.socket
@@ -277,11 +279,25 @@ OnUnitActiveSec=30
 WantedBy=timers.target
 EOF
 
+# pre-pull the container images at startup to avoid delay in http response
+cat > /var/home/core/.config/systemd/user/pre-pull-container-image.service <<EOF
+[Service]
+Type=oneshot
+ExecStart=podman pull $HOSTIP:5000/httpd:prod
+
+[Install]
+WantedBy=multi-user.target default.target
+EOF
+
 # enable socket listener
 ln -s /var/home/core/.config/systemd/user/container-httpd-proxy.socket /var/home/core/.config/systemd/user/sockets.target.wants/container-httpd-proxy.socket
 
 # enable timer
 ln -s /var/home/core/.config/systemd/user/podman-auto-update.timer /var/home/core/.config/systemd/user/timers.target.wants/podman-auto-update.timer
+
+# enable pre-pull container image
+ln -s /var/home/core/.config/systemd/user/pre-pull-container-image.service /var/home/core/.config/systemd/user/default.target.wants/pre-pull-container-image.service
+ln -s /var/home/core/.config/systemd/user/pre-pull-container-image.service /var/home/core/.config/systemd/user/multi-user.target.wants/pre-pull-container-image.service
 
 # fix ownership of user local files and SELinux contexts
 chown -R core: /var/home/core
