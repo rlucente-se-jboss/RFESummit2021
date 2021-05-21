@@ -76,6 +76,29 @@ vrrp_instance RFE_VIP {
     }
 }
 EOF
+
+# set KEEPALIVED_OPTIONS for service to log detailed messages and
+# only run the VRRP subsystem
+cat << EOF > /etc/sysconfig/keepalived
+KEEPALIVED_OPTIONS="-D --vrrp"
+EOF
+
+# enable VRRP through the firewall
+cat << EOF > /etc/systemd/system/enable-vrrp-protocol.service
+[Unit]
+Wants=firewalld.service
+After=firewalld.service
+
+[Service]
+Type=oneshot
+ExecStart=firewall-cmd --add-rich-rule="rule protocol value='vrrp' accept" --permanent
+ExecStartPost=firewall-cmd --reload
+
+[Install]
+WantedBy=multi-user.target default.target
+EOF
+
+systemctl enable enable-vrrp-protocol.service
 %end
 
 %post
