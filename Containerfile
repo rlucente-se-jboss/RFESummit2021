@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:33-x86_64
+FROM registry.fedoraproject.org/fedora:34-x86_64
 
 RUN dnf install -y lorax && \
     dnf clean all && \
