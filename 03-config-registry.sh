@@ -22,15 +22,18 @@ firewall-cmd --permanent --add-port=5000/tcp
 firewall-cmd --reload
 
 mkdir -p /var/lib/registry
-sed -i.bak '/\[registries.insecure\]/!b;n;cdummy' \
-    /etc/containers/registries.conf
-sed -i "s/dummy/registries = ['"$HOSTIP":5000']/g" \
-    /etc/containers/registries.conf
+cat >> /etc/containers/registries.conf <<EOF1
+
+[[registry]]
+location = "$HOSTIP:5000"
+insecure = true
+
+EOF1
 
 #
 # Create systemd unit files for registry service
 #
-CTR_ID=$(podman run --privileged -d --name registry -p 5000:5000 -v /var/lib/registry:/var/lib/registry:Z --restart=always docker.io/library/registry:2)
+CTR_ID=$(podman run --privileged -d --name registry -p 5000:5000 -v /var/lib/registry:/var/lib/registry:Z --restart=on-failure docker.io/library/registry:2)
 podman generate systemd --new --files --name $CTR_ID
 
 #
