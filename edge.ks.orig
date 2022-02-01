@@ -161,8 +161,8 @@ EOF
 %post
 
 ##
-## Create a scale out systemd service for a container web server
-## using socket activation
+## Create a scale from zero systemd service for a container web
+## server using socket activation
 ##
 
 # create systemd user directories for rootless services, timers,
