@@ -7,10 +7,10 @@ This presents a demonstration of RHEL for Edge that includes:
 * Atomic upgrade of the underlying operating system with rollback on failure
 
 ## Pre-demo setup 
-Start with a minimal install of RHEL 8.4+ on baremetal or on a VM
+Start with a minimal install of RHEL 8.5+ on baremetal or on a VM
 that permits nested virtualization. Make sure this repository is
 on your RHEL 8 host using either `git clone` or secure copy (`scp`).
-Download the [RHEL 8.4 Boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.4/x86_64/product-software)
+Download the [RHEL 8.5 Boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.5/x86_64/product-software)
 in the same directory as this repository.
 
 During RHEL installation, configure a regular user with `sudo`
@@ -25,12 +25,12 @@ to pull updated content. Also, review the settings for the amount
 of memory (in MiB), number of virtual cpus, disk size, and the
 virtual IP (VIP) address for keepalived for each of the two edge
 guests that you'll be launching using KVM.  Please make sure the
-path to the [RHEL 8.4 boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.4/x86_64/product-software)
+path to the [RHEL 8.5 boot ISO](https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.5/x86_64/product-software)
 is correct.
 
 The first setup script will configure a network bridge so that the
 two edge guests will appear on the same LAN as the RHEL host. The
-VIP defaults to address .100 on the same subnet. Adjust these
+VIP defaults to address `.100` on the same subnet. Adjust these
 settings for your environment.
 
 Login to the RHEL host using `ssh` and then run the first script
@@ -87,11 +87,11 @@ command to list them:
 
     composer-cli compose types
 
-We'll be building a `rhel-edge-commit` image type which is an OSTree
+We'll be building a `edge-commit` image type which is an OSTree
 image packaged as a tarball. Start a compose using the following
 command:
 
-    composer-cli compose start RFE rhel-edge-commit
+    composer-cli compose start RFE edge-commit
 
 The image will take between five and ten minutes to build. You can
 check the status using:
@@ -115,7 +115,7 @@ Download the first operating system image using:
     composer-cli compose image <TAB>
 
 The `TAB` key can help complete the command line with the UUID of
-the image. You should download a image that's just over 600 MiB in
+the image. You should download a image that's just over 800 MiB in
 size. Expand that image and take a look at the metadata using:
 
     tar xf *.tar
@@ -180,9 +180,9 @@ it's finished, list the image UUIDs on the command line using:
 The output will look something like this:
 
     149b153b-82a8-4adb-8f36-27481ac2d0f2 FINISHED Sun Apr 25 14:17:32 2020 RFE
-           0.0.1 rhel-edge-commit
+           0.0.1 edge-commit
     12a775e4-1300-428f-a62c-505042948616 FINISHED Sun Apr 25 14:54:19 2020 RFE
-           0.0.2 rhel-edge-commit 2147483648
+           0.0.2 edge-commit 2147483648
 
 We want to work with the UUID matching the `0.0.2` version of the
 image build. For the `composer-cli compose image` command below,
@@ -192,7 +192,7 @@ the UUID matching version `0.0.2` as shown above.
     cd ~/version-2
     composer-cli compose image IMAGE_UUID
 
-You should download a image that's just over 600 MiB in size. Expand
+You should download a image that's just over 800 MiB in size. Expand
 that image and take a look at the metadata using:
 
     tar xf *.tar
