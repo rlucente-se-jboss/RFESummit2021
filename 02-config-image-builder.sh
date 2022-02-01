@@ -41,7 +41,7 @@ sudo virt-host-validate
 echo
 echo 'If you see "Checking if IOMMU is enabled by kernel : WARN" then'
 echo 'enable it by adding either the option intel_iommu=on or amd_iommu=on'
-echo 'to the GRUB_CMDLINE_LINUX line in /etc/default/grub.cfg and then'
+echo 'to the GRUB_CMDLINE_LINUX line in /etc/default/grub and then'
 echo 'running the following commands:'
 echo
 echo "    sudo vi /etc/default/grub"
