@@ -544,7 +544,7 @@ The output from that command will resemble the following:
     State: idle
     AutomaticUpdates: stage; rpm-ostreed-automatic.timer: no runs since boot
     Deployments:
-    * ostree://edge:rhel/8/x86_64/edge
+    ● ostree://edge:rhel/8/x86_64/edge
                      Timestamp: 2021-03-31T00:11:31Z
                         Commit: 98a1d03316797162d4b3a1fad22c36be049c46b42605307a0553e35c909c6a6d
                         Staged: no
@@ -555,7 +555,7 @@ The output from that command will resemble the following:
                         Commit: 662c26c39800e4fa97430fecdab6d25bd704c8d9228555e082217b16d5697f02
                      StateRoot: rhel
 
-The active image is preceded with an `*` and you can tell its the
+The active image is preceded with an `●` and you can tell its the
 prior image by looking at the timestamps for both. The commit
 identifier for the active image also matches the commit identifiers
 in both the `/etc/greenboot/orig.txt` and `/etc/greenboot/current.txt`
@@ -609,7 +609,7 @@ The output from that command will resemble:
     State: idle
     AutomaticUpdates: stage; rpm-ostreed-automatic.timer: no runs since boot
     Deployments:
-    * ostree://edge:rhel/8/x86_64/edge
+    ● ostree://edge:rhel/8/x86_64/edge
                      Timestamp: 2021-03-31T00:38:20Z
                         Commit: 662c26c39800e4fa97430fecdab6d25bd704c8d9228555e082217b16d5697f02
                         Staged: no
