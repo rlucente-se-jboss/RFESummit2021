@@ -9,6 +9,10 @@ name = "fuse-overlayfs"
 version = "*"
 
 [[packages]]
+name = "jq"
+version = "*"
+
+[[packages]]
 name = "keepalived"
 version = "*"
 

@@ -330,10 +330,10 @@ cat > /etc/greenboot/check/required.d/01_check_upgrade.sh <<EOF
 
 if [ ! -f /etc/greenboot/orig.txt ]
 then
-    rpm-ostree status | grep -A2 '^\*' | grep Commit > /etc/greenboot/orig.txt
+    rpm-ostree status -b --jsonpath ..checksum | jq .[0] -r > /etc/greenboot/orig.txt
 fi
 
-rpm-ostree status | grep -A2 '^\*' | grep Commit > /etc/greenboot/current.txt
+rpm-ostree status -b --jsonpath ..checksum | jq .[0] -r > /etc/greenboot/current.txt
 
 diff -s /etc/greenboot/orig.txt /etc/greenboot/current.txt
 EOF
